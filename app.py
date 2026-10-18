@@ -5,9 +5,9 @@ import time
 import datetime
 import yfinance as yf
 
-st.set_page_config(page_title="ApexQuant™ Ultra-Tech Terminal", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ApexQuant™ Institutional Terminal", layout="wide", initial_sidebar_state="expanded")
 
-# High-Tech Cyber-Terminal CSS Styling
+# Professional Cyber-Terminal CSS Styling
 st.markdown("""
     <style>
     .main { background-color: #07090e; color: #00ffcc; font-family: 'Courier New', monospace; }
@@ -19,23 +19,23 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ ApexQuant™ // HYPER-TECH MULTI-AGENT QUANT ENGINE v4.2")
-st.markdown("<p style='color: #8b949e;'>Autonomous Institutional Paper Trading & Machine Learning Execution Matrix</p>", unsafe_allow_html=True)
+st.title("🛡️ ApexQuant™ // INSTITUTIONAL QUANT & MULTI-AGENT TERMINAL")
+st.markdown("<p style='color: #8b949e;'>Autonomous Paper Trading, ML Predictive Scoring & Risk Matrix Engine</p>", unsafe_allow_html=True)
 st.markdown("---")
 
-# Persistent State Initialization
+# Session State Initialization
 if 'balance' not in st.session_state:
     st.session_state.balance = 50000.0
     st.session_state.initial_balance = 50000.0
     st.session_state.trades = []
-    st.session_state.system_logs = ["[SYSTEM] Core Neural Swarm Initialized. All 4 Agents Standing By."]
+    st.session_state.system_logs = ["[SYSTEM] Neural Swarm & Quant Engines Initialized. All 4 Agents Online."]
 
-# Sidebar High-Tech Controls
-st.sidebar.header("🎛️ Quant Parameters")
-symbol = st.sidebar.selectbox("Target Instrument", ["XAUUSD=X", "BTC-USD", "ETH-USD", "EURUSD=X", "NVDA", "TSLA"])
+# Sidebar Controls
+st.sidebar.header("🎛️ Terminal Configurations")
+symbol = st.sidebar.selectbox("Target Instrument", ["GC=F", "BTC-USD", "ETH-USD", "EURUSD=X", "NVDA", "TSLA"])
 timeframe = st.sidebar.selectbox("Tick Interval", ["1m", "5m", "15m", "1h", "1d"])
 risk_alloc = st.sidebar.slider("Dynamic Risk Allocation (%)", 0.25, 3.0, 1.25)
-ml_model = st.sidebar.selectbox("ML Prediction Core", ["XGBoost + Order Block Classifier", "LSTM Sentiment Weighted", "Reinforcement Q-Learning Matrix"])
+ml_model = st.sidebar.selectbox("ML & Quant Core", ["XGBoost + Order Block Classifier", "Logistic Regression Sentiment", "Monte Carlo Probabilistic Matrix"])
 auto_loop = st.sidebar.checkbox("🚀 Enable Hyper-Autonomous Execution Loop", value=False)
 
 # Top Telemetry Metrics
@@ -50,12 +50,12 @@ m5.metric("Swarm Status", "ACTIVE [4/4]", delta="Low Latency")
 st.markdown("---")
 
 # Main Dashboard Layout - 2 Columns
-col_left, col_right = st.columns([1.2, 0.8])
+col_left, col_right = st.columns([1.3, 0.7])
 
 with col_left:
     st.markdown("### 📊 Live Order Book & Multi-Timeframe Price Action")
     try:
-        df = yf.download(symbol, period="5d", interval="1h", progress=False)
+        df = yf.download(symbol, period="7d", interval="1h", progress=False)
         if not df.empty:
             curr_price = float(df['Close'].iloc[-1].item())
             high_24h = float(df['High'].max().item())
@@ -63,11 +63,11 @@ with col_left:
             
             sub1, sub2, sub3 = st.columns(3)
             sub1.metric("Live Spot Price", f"${curr_price:,.2f}")
-            sub2.metric("24h Session High", f"${high_24h:,.2f}")
-            sub3.metric("24h Session Low", f"${low_24h:,.2f}")
+            sub2.metric("Session High", f"${high_24h:,.2f}")
+            sub3.metric("Session Low", f"${low_24h:,.2f}")
             
             # Interactive Chart
-            st.line_chart(df['Close'], height=280)
+            st.line_chart(df['Close'], height=300)
         else:
             st.warning("Establishing secure socket connection to market feed...")
     except Exception as e:
@@ -78,12 +78,12 @@ with col_right:
     
     if st.button("⚡ Execute Manual Neural Sweep") or auto_loop:
         with st.spinner("Synthesizing order flow & liquidity pools..."):
-            time.sleep(0.8)
+            time.sleep(0.6)
             timestamp = datetime.datetime.now().strftime("%H:%M:%S")
             
-            # Simulate Agent Actions
+            # Simulate Agent Log Activity
             st.session_state.system_logs.insert(0, f"[{timestamp}] [AG-1 MARKET]: Fair Value Gap (FVG) identified on {symbol}.")
-            st.session_state.system_logs.insert(0, f"[{timestamp}] [AG-2 ML ENGINE]: XGBoost probability score 91.4% -> LONG Bias.")
+            st.session_state.system_logs.insert(0, f"[{timestamp}] [AG-2 ML ENGINE]: Probability score 91.4% -> Directional Bias LONG.")
             st.session_state.system_logs.insert(0, f"[{timestamp}] [AG-3 RISK]: ATR volatility check passed. Sizing locked at {risk_alloc}%.")
             
             trade_pnl = np.random.uniform(150.0, 450.0)
@@ -98,10 +98,10 @@ with col_right:
             })
             st.success("Autonomous trade cycle successfully executed!")
     
-    # Render Live Terminal Logs
-    log_box = st.container(height=280)
+    # Render Live Terminal Logs Container
+    log_box = st.container(height=300)
     with log_box:
-        for log in st.session_state.system_logs[:15]:
+        for log in st.session_state.system_logs[:20]:
             if "MARKET" in log:
                 st.markdown(f"<span class='log-info'>{log}</span>", unsafe_allow_html=True)
             elif "ML" in log:
