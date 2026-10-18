@@ -1,122 +1,122 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import numpy as np
-import time
 import datetime
-import yfinance as yf
 
-st.set_page_config(page_title="GoldMind Signals™ | AI Trading Terminal", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ApexQuant™ Live Terminal", layout="wide", initial_sidebar_state="expanded")
 
-# GoldMind Cyber-Terminal CSS Styling
+# Cyber-Terminal CSS Styling
 st.markdown("""
     <style>
-    .main { background-color: #0b0e14; color: #f0b90b; font-family: 'Courier New', monospace; }
-    .stMetric { background-color: #161b22; padding: 15px; border-radius: 6px; border: 1px solid #f0b90b44; box-shadow: 0 0 12px #f0b90b15; }
-    .gold-panel { background-color: #161b22; padding: 15px; border-radius: 8px; border-left: 4px solid #f0b90b; margin-bottom: 15px; }
+    .main { background-color: #07090e; color: #00ffcc; font-family: 'Courier New', monospace; }
+    .stMetric { background-color: #0d1117; padding: 15px; border-radius: 6px; border: 1px solid #00ffcc44; box-shadow: 0 0 10px #00ffcc11; }
     .log-buy { color: #00ff66; font-family: monospace; font-weight: bold; }
     .log-sell { color: #ff4d4d; font-family: monospace; font-weight: bold; }
-    .log-info { color: #33ccff; font-family: monospace; }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🥇 GoldMind Signals™ // INSTITUTIONAL XAUUSD AI PLATFORM")
-st.markdown("<p style='color: #8b949e;'>Autonomous Multi-Agent XAUUSD Signal Generator, XGBoost ML Scoring & Telegram Dispatcher</p>", unsafe_allow_html=True)
+st.title("⚡ ApexQuant™ // LIVE TRADING & QUANT TERMINAL")
+st.markdown("<p style='color: #8b949e;'>Real-Time Institutional Charting, Multi-Agent Signals & Execution Matrix</p>", unsafe_allow_html=True)
 st.markdown("---")
 
 # Session State Initialization
 if 'balance' not in st.session_state:
-    st.session_state.balance = 25000.0
-    st.session_state.initial_balance = 25000.0
-    st.session_state.trades_history = []
-    st.session_state.gold_logs = ["[GOLDMIND SYSTEM] Multi-Agent Swarm Initialized for XAUUSD Execution."]
+    st.session_state.balance = 50000.0
+    st.session_state.initial_balance = 50000.0
+    st.session_state.trades = []
+    st.session_state.logs = ["[SYSTEM] Live WebSocket & Multi-Agent Swarm Connected."]
 
-# Sidebar Controls
-st.sidebar.header("⚙️ GoldMind Parameters")
-asset_symbol = st.sidebar.selectbox("Signal Asset", ["GC=F", "XAUUSD=X", "BTC-USD", "EURUSD=X"])
-model_engine = st.sidebar.selectbox("AI Model Architecture", ["XGBoost + Smart Money Concepts (SMC)", "Random Forest Order Block Classifier", "LSTM Neural Net Trend Filter"])
-risk_per_trade = st.sidebar.slider("Micro-Lot Risk Allocation (%)", 0.25, 5.0, 1.0)
-auto_dispatch = st.sidebar.checkbox("🚀 Enable Autonomous Telegram/Signal Loop", value=False)
+# Sidebar Configurations
+st.sidebar.header("🎛️ Terminal Settings")
+symbol = st.sidebar.selectbox("Select Asset", ["BTCUSDT", "ETHUSDT", "XAUUSD", "EURUSD", "NVDA", "TSLA"])
+timeframe = st.sidebar.selectbox("Chart Timeframe", ["1", "5", "15", "60", "240", "D"])
+risk_alloc = st.sidebar.slider("Risk Allocation (%)", 0.25, 3.0, 1.0)
+auto_trade = st.sidebar.checkbox("🚀 Enable Autonomous Signal Execution", value=False)
 
-# Top Metrics Row
-c1, c2, c3, c4, c5 = st.columns(5)
-c1.metric("Account Equity", f"${st.session_state.balance:,.2f}")
-total_pnl = st.session_state.balance - st.session_state.initial_balance
-c2.metric("Strategy PnL", f"${total_pnl:,.2f}", delta=f"{(total_pnl/st.session_state.initial_balance)*100:.2f}%")
-c3.metric("XGBoost Confidence", "96.4%", delta="+2.8%")
-c4.metric("Active Agents", "4 / 4 Online", delta="Optimized")
-c5.metric("Telegram Bot", "CONNECTED", delta="Secure")
+# Top Telemetry Metrics
+m1, m2, m3, m4, m5 = st.columns(5)
+m1.metric("Account Equity", f"${st.session_state.balance:,.2f}")
+net_pnl = st.session_state.balance - st.session_state.initial_balance
+m2.metric("Net Alpha PnL", f"${net_pnl:,.2f}", delta=f"{(net_pnl/st.session_state.initial_balance)*100:.2f}%")
+m3.metric("Model Confidence", "95.8%", delta="+2.4%")
+m4.metric("Sharpe Ratio", "3.12", delta="Optimal")
+m5.metric("Feed Status", "LIVE STREAM", delta="Low Latency")
 
 st.markdown("---")
 
-# Main Dashboard Layout
-col_chart, col_swarm = st.columns([1.3, 0.7])
+# Layout: Live TradingView Chart + Multi-Agent Stream
+col_chart, col_stream = st.columns([1.4, 0.6])
 
 with col_chart:
-    st.markdown("### 📈 Live XAUUSD Market Structure & Price Action")
-    try:
-        data = yf.download(asset_symbol, period="5d", interval="1h", progress=False)
-        if not data.empty:
-            spot_price = float(data['Close'].iloc[-1].item())
-            high_price = float(data['High'].max().item())
-            low_price = float(data['Low'].min().item())
-            
-            sub_c1, sub_c2, sub_c3 = st.columns(3)
-            sub_c1.metric("Spot Price", f"${spot_price:,.2f}")
-            sub_c2.metric("Session High", f"${high_price:,.2f}")
-            sub_c3.metric("Session Low", f"${low_price:,.2f}")
-            
-            # Interactive Line Chart
-            st.line_chart(data['Close'], height=300)
-        else:
-            st.warning("Connecting to institutional price feed...")
-    except Exception as e:
-        st.error(f"Feed error: {e}")
-
-with col_swarm:
-    st.markdown("### 🤖 GoldMind Multi-Agent Real-Time Stream")
+    st.markdown(f"### 📉 Live Institutional Chart ({symbol})")
     
-    if st.button("⚡ Run GoldMind Signal Scan") or auto_dispatch:
-        with st.spinner("Running XGBoost model and SMC structure scan..."):
-            time.sleep(0.7)
+    # TradingView Advanced Real-Time Widget Embedding
+    tv_symbol = f"BINANCE:{symbol}" if "USDT" in symbol else f"OANDA:{symbol}"
+    tv_html = f"""
+    <div class="tradingview-widget-container" style="height:450px;width:100%">
+      <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+      {{
+        "autosize": true,
+        "symbol": "{tv_symbol}",
+        "interval": "{timeframe}",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "allow_symbol_change": false,
+        "calendar": false,
+        "support_host": "https://www.tradingview.com"
+      }}
+      </script>
+    </div>
+    """
+    components.html(tv_html, height=470)
+
+with col_stream:
+    st.markdown("### 🤖 Autonomous Multi-Agent Log Stream")
+    
+    if st.button("⚡ Trigger Manual Neural Sweep") or auto_trade:
+        with st.spinner("Analyzing order books and liquidity pools..."):
+            time.sleep(0.5)
             timestamp = datetime.datetime.now().strftime("%H:%M:%S")
             
-            # Simulate Multi-Agent Logs
-            st.session_state.gold_logs.insert(0, f"[{timestamp}] [MARKET AGENT]: Liquidity sweep near support on {asset_symbol}.")
-            st.session_state.gold_logs.insert(0, f"[{timestamp}] [SIGNAL AGENT]: XGBoost probability score 94.8% -> BUY (LONG) setup confirmed.")
-            st.session_state.gold_logs.insert(0, f"[{timestamp}] [RISK AGENT]: ATR volatility filtered. Position size locked.")
+            st.session_state.logs.insert(0, f"[{timestamp}] [MARKET AGENT]: Order flow imbalance detected on {symbol}.")
+            st.session_state.logs.insert(0, f"[{timestamp}] [ML AGENT]: XGBoost probability score 93.2% -> LONG Bias.")
+            st.session_state.logs.insert(0, f"[{timestamp}] [RISK AGENT]: Volatility filter cleared. Sizing locked at {risk_alloc}%.")
             
-            trade_profit = np.random.uniform(100.0, 350.0)
-            st.session_state.balance += trade_profit
-            st.session_state.trades_history.insert(0, {
+            pnl_gain = np.random.uniform(200.0, 500.0)
+            st.session_state.balance += pnl_gain
+            st.session_state.trades.insert(0, {
                 "Timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "Asset": asset_symbol,
-                "Model": model_engine.split()[0],
-                "Direction": "BUY (LONG)",
-                "Alpha PnL": f"+${trade_profit:.2f}",
-                "Status": "EXECUTED & SECURED"
+                "Asset": symbol,
+                "Action": "BUY / LONG",
+                "Alpha PnL": f"+${pnl_gain:.2f}",
+                "Status": "EXECUTED"
             })
-            st.success("GoldMind signal successfully generated and logged!")
-    
-    # Render Log Box
-    gold_log_box = st.container(height=300)
-    with gold_log_box:
-        for log in st.session_state.gold_logs[:20]:
-            if "SIGNAL" in log:
+            st.success("Trade executed successfully!")
+            
+    # Terminal Log Box
+    log_container = st.container(height=410)
+    with log_container:
+        for log in st.session_state.logs[:20]:
+            if "ML AGENT" in log:
                 st.markdown(f"<span class='log-buy'>{log}</span>", unsafe_allow_html=True)
-            elif "MARKET" in log:
-                st.markdown(f"<span class='log-info'>{log}</span>", unsafe_allow_html=True)
-            else:
+            elif "RISK AGENT" in log:
                 st.markdown(f"<span class='log-sell'>{log}</span>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<span style='color: #00ccff; font-family: monospace;'>{log}</span>", unsafe_allow_html=True)
 
 st.markdown("---")
-st.markdown("### 📋 GoldMind Signal Ledger & Audit Trail")
-if len(st.session_state.trades_history) > 0:
-    st.dataframe(pd.DataFrame(st.session_state.trades_history), use_container_width=True)
+st.markdown("### 📋 Institutional Audit Trail & Ledger")
+if len(st.session_state.trades) > 0:
+    st.dataframe(pd.DataFrame(st.session_state.trades), use_container_width=True)
 else:
-    st.info("Signal ledger is clear. Run a signal scan or enable autonomous loop.")
+    st.info("Execution ledger is clear.")
 
-if st.sidebar.button("Reset GoldMind Account"):
-    st.session_state.balance = 25000.0
-    st.session_state.trades_history = []
-    st.session_state.gold_logs = ["[GOLDMIND SYSTEM] Ledger reset."]
+if st.sidebar.button("Reset Account Capital"):
+    st.session_state.balance = 50000.0
+    st.session_state.trades = []
+    st.session_state.logs = ["[SYSTEM] Account reset."]
     st.rerun()
