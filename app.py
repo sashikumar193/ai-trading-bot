@@ -19,8 +19,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ ApexQuant™ // INSTITUTIONAL SUITE [SQUARE BOX LAYOUT]")
-st.markdown("<p style='color: #8b949e;'>SMC Scanner, Backtesting Engine, Prop-Firm Simulator & Balanced Charting</p>", unsafe_allow_html=True)
+st.title("🛡️ ApexQuant™ // INSTITUTIONAL QUANT TERMINAL [PERFECT LAYOUT]")
+st.markdown("<p style='color: #8b949e;'>SMC Scanner, Backtesting Engine, Prop-Firm Simulator & High-Resolution Pro Charting</p>", unsafe_allow_html=True)
 st.markdown("---")
 
 # Session State Initialization
@@ -28,7 +28,7 @@ if 'balance' not in st.session_state:
     st.session_state.balance = 50000.0
     st.session_state.initial_balance = 50000.0
     st.session_state.trades = []
-    st.session_state.logs = ["[SYSTEM] Terminal initialized with balanced box layout."]
+    st.session_state.logs = ["[SYSTEM] Terminal layout optimized for perfect height and proportions."]
 
 # Telegram Dispatcher Helper
 def send_telegram(token, chat_id, message):
@@ -84,7 +84,7 @@ m5.metric("Telegram Bot", "CONNECTED" if tg_token and tg_chat_id else "STANDBY",
 
 st.markdown("---")
 
-# SMC Scanner Preview
+# SMC Scanner Preview Grid
 st.markdown("### 🏛️ Smart Money Concepts (SMC) & Order Block Scanner")
 smc_col1, smc_col2, smc_col3, smc_col4 = st.columns(4)
 smc_col1.markdown("<div class='grid-box'><b>Order Block (OB)</b><br><span style='color:#00ff66;'>BULLISH ZONE ACTIVE</span></div>", unsafe_allow_html=True)
@@ -94,48 +94,48 @@ smc_col4.markdown("<div class='grid-box'><b>Liquidity Sweep</b><br><span style='
 
 st.markdown("---")
 
-# Layout: 2-Column Grid (Left: Square Chart Box, Right: Execution Stream & Controls)
-col_chart, col_side = st.columns([1.1, 0.9])
+# --- FULL WIDTH LARGE PRO CHART (Height set to 650px for proper proportions) ---
+st.markdown(f"### 📉 Live Institutional Pro Chart — {symbol}")
 
-with col_chart:
-    st.markdown(f"### 📉 Live Chart — {symbol}")
-    
-    if symbol == "XAUUSD":
-        tv_symbol = "OANDA:XAUUSD"
-    elif "USDT" in symbol:
-        tv_symbol = f"BINANCE:{symbol}"
-    elif symbol in ["EURUSD"]:
-        tv_symbol = f"OANDA:{symbol}"
-    else:
-        tv_symbol = f"NASDAQ:{symbol}"
+if symbol == "XAUUSD":
+    tv_symbol = "OANDA:XAUUSD"
+elif "USDT" in symbol:
+    tv_symbol = f"BINANCE:{symbol}"
+elif symbol in ["EURUSD"]:
+    tv_symbol = f"OANDA:{symbol}"
+else:
+    tv_symbol = f"NASDAQ:{symbol}"
 
-    # Optimized width & square height for a clean box layout
-    tv_html = f"""
-    <div class="tradingview-widget-container" style="height:500px;width:100%">
-      <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-      {{
-        "autosize": true,
-        "symbol": "{tv_symbol}",
-        "interval": "{timeframe}",
-        "timezone": "Etc/UTC",
-        "theme": "dark",
-        "style": "1",
-        "locale": "en",
-        "allow_symbol_change": true,
-        "calendar": false,
-        "support_host": "https://www.tradingview.com"
-      }}
-      </script>
-    </div>
-    """
-    components.html(tv_html, height=520)
+tv_html = f"""
+<div class="tradingview-widget-container" style="height:650px;width:100%">
+  <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+  {{
+    "autosize": true,
+    "symbol": "{tv_symbol}",
+    "interval": "{timeframe}",
+    "timezone": "Etc/UTC",
+    "theme": "dark",
+    "style": "1",
+    "locale": "en",
+    "allow_symbol_change": true,
+    "calendar": true,
+    "support_host": "https://www.tradingview.com"
+  }}
+  </script>
+</div>
+"""
+components.html(tv_html, height=670)
 
-with col_side:
-    st.markdown("### ⚡ Execution & Agent Stream")
-    
+st.markdown("---")
+
+# --- EXECUTION CONTROLS & AGENT STREAM (Side-by-side balanced below chart) ---
+col_action, col_logs = st.columns([1, 1])
+
+with col_action:
+    st.markdown("### ⚡ Multi-Agent Execution Control")
     if st.button("🚀 Execute Neural Sweep & Risk Filter") or auto_trade:
-        with st.spinner("Executing SMC & Risk Protocols..."):
+        with st.spinner("Executing SMC, Prop-Firm, and Risk Protocols..."):
             time.sleep(0.5)
             timestamp = datetime.datetime.now().strftime("%H:%M:%S")
             
@@ -165,9 +165,12 @@ with col_side:
                     "Status": "EXECUTED"
                 })
                 st.success("Trade executed successfully!")
+    
+    st.info("💡 Tip: Use the TradingView toolbar inside the chart above to draw trendlines, apply indicators, or switch timeframes instantly.")
 
-    # Terminal Log Box matching the chart height
-    log_container = st.container(height=420)
+with col_logs:
+    st.markdown("### 🤖 Autonomous Multi-Agent Stream")
+    log_container = st.container(height=240)
     with log_container:
         for log in st.session_state.logs[:20]:
             if "SMC" in log or "TELEGRAM" in log:
