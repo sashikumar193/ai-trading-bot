@@ -24,12 +24,16 @@ st.title("🛡️ ApexQuant™ // LIVE PAPER TRADING & AGENT ENGINE")
 st.markdown("<p style='color: #8b949e;'>Real-Time yFinance Price Feed, Autonomous Agent Paper Trading & Risk Matrix</p>", unsafe_allow_html=True)
 st.markdown("---")
 
-# Session State Initialization for Paper Trading
+# Safe Session State Initialization for Paper Trading
 if 'balance' not in st.session_state:
     st.session_state.balance = 50000.0
+if 'initial_balance' not in st.session_state:
     st.session_state.initial_balance = 50000.0
+if 'open_positions' not in st.session_state:
     st.session_state.open_positions = []
+if 'trade_history' not in st.session_state:
     st.session_state.trade_history = []
+if 'logs' not in st.session_state:
     st.session_state.logs = ["[SYSTEM] Live Paper Trading Engine & Agent Swarm Initialized."]
 
 # Telegram Dispatcher Helper
@@ -152,7 +156,7 @@ with col_action:
     trade_action = st.selectbox("Manual Paper Order Action", ["-- Choose Action --", "Execute AI Buy (Long)", "Execute AI Sell (Short)", "Close All Open Positions"])
     
     if st.button("🚀 Run Autonomous Agent Trade Sweep") or auto_trade or trade_action != "-- Choose Action --":
-        with st.spinner("Fetching live price and executing paper trade via agent swarm...?"):
+        with st.spinner("Fetching live price and executing paper trade via agent swarm..."):
             time.sleep(0.4)
             timestamp = datetime.datetime.now().strftime("%H:%M:%S")
             
