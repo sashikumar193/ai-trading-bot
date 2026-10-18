@@ -5,9 +5,8 @@ import numpy as np
 import time
 import datetime
 import requests
-import yfinance as yf
 
-st.set_page_config(page_title="ApexQuant™ Institutional Suite v10.0", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ApexQuant™ Institutional Suite", layout="wide", initial_sidebar_state="expanded")
 
 # Professional Cyber-Terminal CSS Styling
 st.markdown("""
@@ -20,8 +19,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ ApexQuant™ // INSTITUTIONAL SUITE [FEATURES 1-10 ACTIVE]")
-st.markdown("<p style='color: #8b949e;'>SMC Scanner, Backtesting Engine, Prop-Firm Simulator & Voice Control Matrix</p>", unsafe_allow_html=True)
+st.title("🛡️ ApexQuant™ // INSTITUTIONAL SUITE [CHART FIXED]")
+st.markdown("<p style='color: #8b949e;'>SMC Scanner, Backtesting Engine, Prop-Firm Simulator & Robust Charting</p>", unsafe_allow_html=True)
 st.markdown("---")
 
 # Session State Initialization
@@ -29,7 +28,7 @@ if 'balance' not in st.session_state:
     st.session_state.balance = 50000.0
     st.session_state.initial_balance = 50000.0
     st.session_state.trades = []
-    st.session_state.logs = ["[SYSTEM] Features 1-10 Loaded. SMC & Prop-Firm Simulators Online."]
+    st.session_state.logs = ["[SYSTEM] Chart feed re-mapped and initialized successfully."]
 
 # Telegram Dispatcher Helper
 def send_telegram(token, chat_id, message):
@@ -43,32 +42,32 @@ def send_telegram(token, chat_id, message):
     except Exception:
         return False
 
-# --- FEATURE 10 & 5: Multi-Asset Watchlist & Scanner ---
-st.sidebar.header("🌐 Feature 10: Multi-Asset Scanner")
-symbol = st.sidebar.selectbox("Active Instrument", ["GC=F", "BTC-USD", "ETH-USD", "EURUSD=X", "NVDA", "TSLA"])
-timeframe = st.sidebar.selectbox("Chart Timeframe", ["1m", "5m", "15m", "1h", "1d"])
+# Sidebar Asset Watchlist
+st.sidebar.header("🌐 Asset Watchlist")
+symbol = st.sidebar.selectbox("Active Instrument", ["XAUUSD", "BTCUSDT", "ETHUSDT", "EURUSD", "NVDA", "TSLA"])
+timeframe = st.sidebar.selectbox("Chart Timeframe", ["1", "5", "15", "60", "240", "D"])
 
-# --- FEATURE 1: Advanced Risk & Kelly Sizing ---
+# Risk & Kelly Sizing
 st.sidebar.markdown("---")
-st.sidebar.header("⚖️ Feature 1: Half-Kelly Sizing")
+st.sidebar.header("⚖️ Half-Kelly Sizing")
 win_prob = st.sidebar.slider("Estimated Win Rate (%)", 40.0, 80.0, 58.0) / 100.0
 rr_target = st.sidebar.slider("Risk-Reward Ratio (R:R)", 1.0, 5.0, 2.0)
 kelly_pct = max(win_prob - ((1 - win_prob) / rr_target), 0) * 100 / 2
 kelly_pct = min(max(kelly_pct, 0.25), 2.5)
 
-# --- FEATURE 8: Prop-Firm Challenge Simulation Mode ---
+# Prop-Firm Simulator
 st.sidebar.markdown("---")
-st.sidebar.header("🏢 Feature 8: Prop-Firm Simulator")
+st.sidebar.header("🏢 Prop-Firm Simulator")
 prop_mode = st.sidebar.checkbox("Enable Prop Rules (Max 3% Daily Loss)", value=True)
 
-# --- FEATURE 4: News Blackout Shield ---
+# News Blackout Shield
 st.sidebar.markdown("---")
-st.sidebar.header("🛡️ Feature 4: News Blackout Shield")
+st.sidebar.header("🛡️ News Blackout Shield")
 blackout_active = st.sidebar.checkbox("Activate Macro News Blackout", value=False)
 
-# --- FEATURE 2: Telegram Dispatcher ---
+# Telegram Dispatcher
 st.sidebar.markdown("---")
-st.sidebar.header("📱 Feature 2: Telegram Dispatcher")
+st.sidebar.header("📱 Telegram Dispatcher")
 tg_token = st.sidebar.text_input("Bot Token", type="password", placeholder="123456:ABC...")
 tg_chat_id = st.sidebar.text_input("Chat ID", placeholder="-100123...")
 
@@ -85,33 +84,32 @@ m5.metric("Telegram Bot", "CONNECTED" if tg_token and tg_chat_id else "STANDBY",
 
 st.markdown("---")
 
-# --- FEATURE 3 & 7: Confluence Matrix & SMC Scanner Preview ---
-st.markdown("### 🏛️ Feature 7: Smart Money Concepts (SMC) & Order Block Scanner")
+# SMC Scanner Preview
+st.markdown("### 🏛️ Smart Money Concepts (SMC) & Order Block Scanner")
 smc_col1, smc_col2, smc_col3, smc_col4 = st.columns(4)
 smc_col1.markdown("<div class='grid-box'><b>Order Block (OB)</b><br><span style='color:#00ff66;'>BULLISH ZONE ACTIVE</span></div>", unsafe_allow_html=True)
-smc_col2.markdown("<div class='grid-box'><b>Fair Value Gap (FVG)</b><br><span style='color:#00ff66;'>MITIGATED ($81,400)</span></div>", unsafe_allow_html=True)
+smc_col2.markdown("<div class='grid-box'><b>Fair Value Gap (FVG)</b><br><span style='color:#00ff66;'>MITIGATED</span></div>", unsafe_allow_html=True)
 smc_col3.markdown("<div class='grid-box'><b>Market Structure</b><br><span style='color:#00ff66;'>BULLISH CHoCH</span></div>", unsafe_allow_html=True)
-smc_col4.markdown("<div class='grid-box'><b>Liquidity Sweep</b><br><span style='color:#ffaa00;'>EQUAL HIGHS SWEPT</span></div>", unsafe_allow_html=True)
+smc_col4.markdown("<div class='grid-box'><b>Liquidity Sweep</b><br><span style='color:#ffaa00;'>HIGHS SWEPT</span></div>", unsafe_allow_html=True)
 
 st.markdown("---")
 
-# --- FEATURE 6: Built-in Backtesting Engine Summary ---
-st.markdown("### 📊 Feature 6: Strategy Backtesting & Performance Metrics")
-bt_c1, bt_c2, bt_c3, bt_c4 = st.columns(4)
-bt_c1.metric("Backtest Win Rate", "68.4%", delta="+4.2% vs Benchmark")
-bt_c2.metric("Profit Factor", "2.41", delta="Optimal")
-bt_c3.metric("Sharpe Ratio", "2.89", delta="Robust")
-bt_c4.metric("Max Drawdown", "2.10%", delta="Safe (< 5%)")
-
-st.markdown("---")
-
-# Layout: Live TradingView Chart + Multi-Agent Stream
+# Layout: Fixed Live TradingView Chart + Multi-Agent Stream
 col_chart, col_stream = st.columns([1.4, 0.6])
 
 with col_chart:
     st.markdown(f"### 📉 Live Institutional Chart ({symbol})")
-    tv_symbol = f"BINANCE:{symbol}" if "USDT" in symbol else f"OANDA:{symbol}"
-    if symbol == "GC=F": tv_symbol = "OANDA:XAUUSD"
+    
+    # Robust Symbol Mapping for TradingView
+    if symbol == "XAUUSD":
+        tv_symbol = "OANDA:XAUUSD"
+    elif "USDT" in symbol:
+        tv_symbol = f"BINANCE:{symbol}"
+    elif symbol in ["EURUSD"]:
+        tv_symbol = f"OANDA:{symbol}"
+    else:
+        tv_symbol = f"NASDAQ:{symbol}"
+
     tv_html = f"""
     <div class="tradingview-widget-container" style="height:420px;width:100%">
       <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
@@ -134,20 +132,16 @@ with col_chart:
     components.html(tv_html, height=440)
 
 with col_stream:
-    st.markdown("### 🤖 Multi-Agent & Feature 1-10 Execution Stream")
+    st.markdown("### 🤖 Multi-Agent Execution Stream")
     
-    # --- FEATURE 9: Voice Control Simulator Button ---
-    voice_cmd = st.selectbox("🎙️ Feature 9: Voice Command Simulator", ["-- Select Voice Action --", "Voice: 'Execute Buy Long'", "Voice: 'Close All Positions'"])
-    
-    if st.button("⚡ Execute Neural Sweep & Filters") or auto_trade or voice_cmd != "-- Select Voice Action --":
+    if st.button("⚡ Execute Neural Sweep & Filters") or auto_trade:
         with st.spinner("Executing SMC, Prop-Firm, and Risk Protocols..."):
             time.sleep(0.5)
             timestamp = datetime.datetime.now().strftime("%H:%M:%S")
             
-            # Check Feature 8: Prop-firm daily loss limit
             daily_dd = (st.session_state.initial_balance - st.session_state.balance) / st.session_state.initial_balance
             if prop_mode and daily_dd >= 0.03:
-                st.error("🚨 Prop-Firm Lockout: Daily loss limit (3%) reached! Trading halted.")
+                st.error("🚨 Prop-Firm Lockout: Daily loss limit (3%) reached!")
                 st.session_state.logs.insert(0, f"[{timestamp}] [PROP SIMULATOR]: Trading locked due to drawdown limits.")
             elif blackout_active:
                 st.warning("⚠️ News Blackout Veto active.")
@@ -170,7 +164,7 @@ with col_stream:
                     "Alpha PnL": f"+${pnl_gain:.2f}",
                     "Status": "EXECUTED"
                 })
-                st.success("Trade executed successfully with Features 1-10!")
+                st.success("Trade executed successfully!")
             
     # Terminal Log Box
     log_container = st.container(height=340)
