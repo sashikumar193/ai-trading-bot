@@ -19,8 +19,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ ApexQuant™ // INSTITUTIONAL SUITE [LARGE CHAT & PRO LAYOUT]")
-st.markdown("<p style='color: #8b949e;'>SMC Scanner, Backtesting Engine, Prop-Firm Simulator & High-Resolution Charting</p>", unsafe_allow_html=True)
+st.title("🛡️ ApexQuant™ // INSTITUTIONAL SUITE [SQUARE BOX LAYOUT]")
+st.markdown("<p style='color: #8b949e;'>SMC Scanner, Backtesting Engine, Prop-Firm Simulator & Balanced Charting</p>", unsafe_allow_html=True)
 st.markdown("---")
 
 # Session State Initialization
@@ -28,7 +28,7 @@ if 'balance' not in st.session_state:
     st.session_state.balance = 50000.0
     st.session_state.initial_balance = 50000.0
     st.session_state.trades = []
-    st.session_state.logs = ["[SYSTEM] Terminal initialized with high-resolution layout."]
+    st.session_state.logs = ["[SYSTEM] Terminal initialized with balanced box layout."]
 
 # Telegram Dispatcher Helper
 def send_telegram(token, chat_id, message):
@@ -94,50 +94,48 @@ smc_col4.markdown("<div class='grid-box'><b>Liquidity Sweep</b><br><span style='
 
 st.markdown("---")
 
-# Layout: Full-Width or Larger Layout for Chart
-st.markdown(f"### 📉 Live Institutional Chart — {symbol}")
+# Layout: 2-Column Grid (Left: Square Chart Box, Right: Execution Stream & Controls)
+col_chart, col_side = st.columns([1.1, 0.9])
 
-# Robust Symbol Mapping for TradingView
-if symbol == "XAUUSD":
-    tv_symbol = "OANDA:XAUUSD"
-elif "USDT" in symbol:
-    tv_symbol = f"BINANCE:{symbol}"
-elif symbol in ["EURUSD"]:
-    tv_symbol = f"OANDA:{symbol}"
-else:
-    tv_symbol = f"NASDAQ:{symbol}"
+with col_chart:
+    st.markdown(f"### 📉 Live Chart — {symbol}")
+    
+    if symbol == "XAUUSD":
+        tv_symbol = "OANDA:XAUUSD"
+    elif "USDT" in symbol:
+        tv_symbol = f"BINANCE:{symbol}"
+    elif symbol in ["EURUSD"]:
+        tv_symbol = f"OANDA:{symbol}"
+    else:
+        tv_symbol = f"NASDAQ:{symbol}"
 
-# Increased Height to 680px for a proper large professional view
-tv_html = f"""
-<div class="tradingview-widget-container" style="height:650px;width:100%">
-  <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-  {{
-    "autosize": true,
-    "symbol": "{tv_symbol}",
-    "interval": "{timeframe}",
-    "timezone": "Etc/UTC",
-    "theme": "dark",
-    "style": "1",
-    "locale": "en",
-    "allow_symbol_change": true,
-    "calendar": true,
-    "support_host": "https://www.tradingview.com"
-  }}
-  </script>
-</div>
-"""
-components.html(tv_html, height=680)
+    # Optimized width & square height for a clean box layout
+    tv_html = f"""
+    <div class="tradingview-widget-container" style="height:500px;width:100%">
+      <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+      {{
+        "autosize": true,
+        "symbol": "{tv_symbol}",
+        "interval": "{timeframe}",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "allow_symbol_change": true,
+        "calendar": false,
+        "support_host": "https://www.tradingview.com"
+      }}
+      </script>
+    </div>
+    """
+    components.html(tv_html, height=520)
 
-st.markdown("---")
-
-# Execution Stream and Controls below the chart
-col_control, col_stream = st.columns([1, 1])
-
-with col_control:
-    st.markdown("### ⚡ Multi-Agent Execution Control")
+with col_side:
+    st.markdown("### ⚡ Execution & Agent Stream")
+    
     if st.button("🚀 Execute Neural Sweep & Risk Filter") or auto_trade:
-        with st.spinner("Executing SMC, Prop-Firm, and Risk Protocols..."):
+        with st.spinner("Executing SMC & Risk Protocols..."):
             time.sleep(0.5)
             timestamp = datetime.datetime.now().strftime("%H:%M:%S")
             
@@ -162,15 +160,14 @@ with col_control:
                     "Timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "Asset": symbol,
                     "Action": "BUY / LONG",
-                    "SMC Setup": "Order Block + Fvg",
+                    "SMC Setup": "Order Block + FVG",
                     "Alpha PnL": f"+${pnl_gain:.2f}",
                     "Status": "EXECUTED"
                 })
                 st.success("Trade executed successfully!")
 
-with col_stream:
-    st.markdown("### 🤖 Autonomous Multi-Agent Stream")
-    log_container = st.container(height=220)
+    # Terminal Log Box matching the chart height
+    log_container = st.container(height=420)
     with log_container:
         for log in st.session_state.logs[:20]:
             if "SMC" in log or "TELEGRAM" in log:
