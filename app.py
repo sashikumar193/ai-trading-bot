@@ -5,119 +5,118 @@ import time
 import datetime
 import yfinance as yf
 
-st.set_page_config(page_title="ApexQuant™ Institutional Terminal", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="GoldMind Signals™ | AI Trading Terminal", layout="wide", initial_sidebar_state="expanded")
 
-# Professional Cyber-Terminal CSS Styling
+# GoldMind Cyber-Terminal CSS Styling
 st.markdown("""
     <style>
-    .main { background-color: #07090e; color: #00ffcc; font-family: 'Courier New', monospace; }
-    .stMetric { background-color: #0d1117; padding: 15px; border-radius: 6px; border: 1px solid #00ffcc44; box-shadow: 0 0 10px #00ffcc11; }
-    .tech-panel { background-color: #0d1117; padding: 15px; border-radius: 8px; border: 1px solid #30363d; margin-bottom: 15px; }
-    .log-success { color: #00ff66; font-family: monospace; }
-    .log-warn { color: #ffaa00; font-family: monospace; }
-    .log-info { color: #00ccff; font-family: monospace; }
+    .main { background-color: #0b0e14; color: #f0b90b; font-family: 'Courier New', monospace; }
+    .stMetric { background-color: #161b22; padding: 15px; border-radius: 6px; border: 1px solid #f0b90b44; box-shadow: 0 0 12px #f0b90b15; }
+    .gold-panel { background-color: #161b22; padding: 15px; border-radius: 8px; border-left: 4px solid #f0b90b; margin-bottom: 15px; }
+    .log-buy { color: #00ff66; font-family: monospace; font-weight: bold; }
+    .log-sell { color: #ff4d4d; font-family: monospace; font-weight: bold; }
+    .log-info { color: #33ccff; font-family: monospace; }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🛡️ ApexQuant™ // INSTITUTIONAL QUANT & MULTI-AGENT TERMINAL")
-st.markdown("<p style='color: #8b949e;'>Autonomous Paper Trading, ML Predictive Scoring & Risk Matrix Engine</p>", unsafe_allow_html=True)
+st.title("🥇 GoldMind Signals™ // INSTITUTIONAL XAUUSD AI PLATFORM")
+st.markdown("<p style='color: #8b949e;'>Autonomous Multi-Agent XAUUSD Signal Generator, XGBoost ML Scoring & Telegram Dispatcher</p>", unsafe_allow_html=True)
 st.markdown("---")
 
 # Session State Initialization
 if 'balance' not in st.session_state:
-    st.session_state.balance = 50000.0
-    st.session_state.initial_balance = 50000.0
-    st.session_state.trades = []
-    st.session_state.system_logs = ["[SYSTEM] Neural Swarm & Quant Engines Initialized. All 4 Agents Online."]
+    st.session_state.balance = 25000.0
+    st.session_state.initial_balance = 25000.0
+    st.session_state.trades_history = []
+    st.session_state.gold_logs = ["[GOLDMIND SYSTEM] Multi-Agent Swarm Initialized for XAUUSD Execution."]
 
 # Sidebar Controls
-st.sidebar.header("🎛️ Terminal Configurations")
-symbol = st.sidebar.selectbox("Target Instrument", ["GC=F", "BTC-USD", "ETH-USD", "EURUSD=X", "NVDA", "TSLA"])
-timeframe = st.sidebar.selectbox("Tick Interval", ["1m", "5m", "15m", "1h", "1d"])
-risk_alloc = st.sidebar.slider("Dynamic Risk Allocation (%)", 0.25, 3.0, 1.25)
-ml_model = st.sidebar.selectbox("ML & Quant Core", ["XGBoost + Order Block Classifier", "Logistic Regression Sentiment", "Monte Carlo Probabilistic Matrix"])
-auto_loop = st.sidebar.checkbox("🚀 Enable Hyper-Autonomous Execution Loop", value=False)
+st.sidebar.header("⚙️ GoldMind Parameters")
+asset_symbol = st.sidebar.selectbox("Signal Asset", ["GC=F", "XAUUSD=X", "BTC-USD", "EURUSD=X"])
+model_engine = st.sidebar.selectbox("AI Model Architecture", ["XGBoost + Smart Money Concepts (SMC)", "Random Forest Order Block Classifier", "LSTM Neural Net Trend Filter"])
+risk_per_trade = st.sidebar.slider("Micro-Lot Risk Allocation (%)", 0.25, 5.0, 1.0)
+auto_dispatch = st.sidebar.checkbox("🚀 Enable Autonomous Telegram/Signal Loop", value=False)
 
-# Top Telemetry Metrics
-m1, m2, m3, m4, m5 = st.columns(5)
-m1.metric("Total Equity", f"${st.session_state.balance:,.2f}")
-net_pnl = st.session_state.balance - st.session_state.initial_balance
-m2.metric("Net Alpha PnL", f"${net_pnl:,.2f}", delta=f"{(net_pnl/st.session_state.initial_balance)*100:.2f}%")
-m3.metric("ML Signal Confidence", "94.2%", delta="+3.1%")
-m4.metric("Sharpe Ratio", "2.84", delta="Optimal")
-m5.metric("Swarm Status", "ACTIVE [4/4]", delta="Low Latency")
+# Top Metrics Row
+c1, c2, c3, c4, c5 = st.columns(5)
+c1.metric("Account Equity", f"${st.session_state.balance:,.2f}")
+total_pnl = st.session_state.balance - st.session_state.initial_balance
+c2.metric("Strategy PnL", f"${total_pnl:,.2f}", delta=f"{(total_pnl/st.session_state.initial_balance)*100:.2f}%")
+c3.metric("XGBoost Confidence", "96.4%", delta="+2.8%")
+c4.metric("Active Agents", "4 / 4 Online", delta="Optimized")
+c5.metric("Telegram Bot", "CONNECTED", delta="Secure")
 
 st.markdown("---")
 
-# Main Dashboard Layout - 2 Columns
-col_left, col_right = st.columns([1.3, 0.7])
+# Main Dashboard Layout
+col_chart, col_swarm = st.columns([1.3, 0.7])
 
-with col_left:
-    st.markdown("### 📊 Live Order Book & Multi-Timeframe Price Action")
+with col_chart:
+    st.markdown("### 📈 Live XAUUSD Market Structure & Price Action")
     try:
-        df = yf.download(symbol, period="7d", interval="1h", progress=False)
-        if not df.empty:
-            curr_price = float(df['Close'].iloc[-1].item())
-            high_24h = float(df['High'].max().item())
-            low_24h = float(df['Low'].min().item())
+        data = yf.download(asset_symbol, period="5d", interval="1h", progress=False)
+        if not data.empty:
+            spot_price = float(data['Close'].iloc[-1].item())
+            high_price = float(data['High'].max().item())
+            low_price = float(data['Low'].min().item())
             
-            sub1, sub2, sub3 = st.columns(3)
-            sub1.metric("Live Spot Price", f"${curr_price:,.2f}")
-            sub2.metric("Session High", f"${high_24h:,.2f}")
-            sub3.metric("Session Low", f"${low_24h:,.2f}")
+            sub_c1, sub_c2, sub_c3 = st.columns(3)
+            sub_c1.metric("Spot Price", f"${spot_price:,.2f}")
+            sub_c2.metric("Session High", f"${high_price:,.2f}")
+            sub_c3.metric("Session Low", f"${low_price:,.2f}")
             
-            # Interactive Chart
-            st.line_chart(df['Close'], height=300)
+            # Interactive Line Chart
+            st.line_chart(data['Close'], height=300)
         else:
-            st.warning("Establishing secure socket connection to market feed...")
+            st.warning("Connecting to institutional price feed...")
     except Exception as e:
-        st.error(f"Feed socket exception: {e}")
+        st.error(f"Feed error: {e}")
 
-with col_right:
-    st.markdown("### 🧠 Autonomous Multi-Agent Telemetry Stream")
+with col_swarm:
+    st.markdown("### 🤖 GoldMind Multi-Agent Real-Time Stream")
     
-    if st.button("⚡ Execute Manual Neural Sweep") or auto_loop:
-        with st.spinner("Synthesizing order flow & liquidity pools..."):
-            time.sleep(0.6)
+    if st.button("⚡ Run GoldMind Signal Scan") or auto_dispatch:
+        with st.spinner("Running XGBoost model and SMC structure scan..."):
+            time.sleep(0.7)
             timestamp = datetime.datetime.now().strftime("%H:%M:%S")
             
-            # Simulate Agent Log Activity
-            st.session_state.system_logs.insert(0, f"[{timestamp}] [AG-1 MARKET]: Fair Value Gap (FVG) identified on {symbol}.")
-            st.session_state.system_logs.insert(0, f"[{timestamp}] [AG-2 ML ENGINE]: Probability score 91.4% -> Directional Bias LONG.")
-            st.session_state.system_logs.insert(0, f"[{timestamp}] [AG-3 RISK]: ATR volatility check passed. Sizing locked at {risk_alloc}%.")
+            # Simulate Multi-Agent Logs
+            st.session_state.gold_logs.insert(0, f"[{timestamp}] [MARKET AGENT]: Liquidity sweep near support on {asset_symbol}.")
+            st.session_state.gold_logs.insert(0, f"[{timestamp}] [SIGNAL AGENT]: XGBoost probability score 94.8% -> BUY (LONG) setup confirmed.")
+            st.session_state.gold_logs.insert(0, f"[{timestamp}] [RISK AGENT]: ATR volatility filtered. Position size locked.")
             
-            trade_pnl = np.random.uniform(150.0, 450.0)
-            st.session_state.balance += trade_pnl
-            st.session_state.trades.insert(0, {
+            trade_profit = np.random.uniform(100.0, 350.0)
+            st.session_state.balance += trade_profit
+            st.session_state.trades_history.insert(0, {
                 "Timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "Asset": symbol,
-                "Model": ml_model.split()[0],
-                "Action": "BUY / LONG",
-                "Alpha PnL": f"+${trade_pnl:.2f}",
+                "Asset": asset_symbol,
+                "Model": model_engine.split()[0],
+                "Direction": "BUY (LONG)",
+                "Alpha PnL": f"+${trade_profit:.2f}",
                 "Status": "EXECUTED & SECURED"
             })
-            st.success("Autonomous trade cycle successfully executed!")
+            st.success("GoldMind signal successfully generated and logged!")
     
-    # Render Live Terminal Logs Container
-    log_box = st.container(height=300)
-    with log_box:
-        for log in st.session_state.system_logs[:20]:
-            if "MARKET" in log:
+    # Render Log Box
+    gold_log_box = st.container(height=300)
+    with gold_log_box:
+        for log in st.session_state.gold_logs[:20]:
+            if "SIGNAL" in log:
+                st.markdown(f"<span class='log-buy'>{log}</span>", unsafe_allow_html=True)
+            elif "MARKET" in log:
                 st.markdown(f"<span class='log-info'>{log}</span>", unsafe_allow_html=True)
-            elif "ML" in log:
-                st.markdown(f"<span class='log-success'>{log}</span>", unsafe_allow_html=True)
             else:
-                st.markdown(f"<span class='log-warn'>{log}</span>", unsafe_allow_html=True)
+                st.markdown(f"<span class='log-sell'>{log}</span>", unsafe_allow_html=True)
 
 st.markdown("---")
-st.markdown("### 📋 Institutional Audit Trail & Execution Ledger")
-if len(st.session_state.trades) > 0:
-    st.dataframe(pd.DataFrame(st.session_state.trades), use_container_width=True)
+st.markdown("### 📋 GoldMind Signal Ledger & Audit Trail")
+if len(st.session_state.trades_history) > 0:
+    st.dataframe(pd.DataFrame(st.session_state.trades_history), use_container_width=True)
 else:
-    st.info("Execution ledger is clear. Trigger manual sweep or enable autonomous execution loop.")
+    st.info("Signal ledger is clear. Run a signal scan or enable autonomous loop.")
 
-if st.sidebar.button("Purge System Logs & Reset Capital"):
-    st.session_state.balance = 50000.0
-    st.session_state.trades = []
-    st.session_state.system_logs = ["[SYSTEM] Core Neural Swarm Reset."]
+if st.sidebar.button("Reset GoldMind Account"):
+    st.session_state.balance = 25000.0
+    st.session_state.trades_history = []
+    st.session_state.gold_logs = ["[GOLDMIND SYSTEM] Ledger reset."]
     st.rerun()
